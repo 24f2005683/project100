@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Parking Lots - Vehicle Parking System{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h3>Manage Parking Lots</h3>
+    <a href="{{ url_for('admin.add_parking_lot') }}" class="btn btn-success">Add New Lot</a>
+</div>
+
+{% if lots %}
+<form id="bulkDeleteForm" action="{{ url_for('admin.confirm_bulk_delete_lots') }}" method="GET">
+    <div class="mb-3">
+        <div class="mb-2">
+            <a href="{{ url_for('admin.select_all_lots') }}" class="btn btn-secondary btn-sm">Select All</a>
+            <a href="{{ url_for('admin.clear_selection') }}" class="btn btn-secondary btn-sm">Deselect All</a>
+        </div>
+        <button type="submit" class="btn btn-danger">Delete Selected</button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th width="50">
+                        <a href="{{ url_for('admin.select_all_lots') }}" class="btn btn-sm btn-primary">All</a>
+                    </th>
+                    <th>ID</th>
+                    <th>Location Name</th>
+                    <th>Address</th>
+                    <th>Pin Code</th>
+                    <th>Price/Hour</th>
+                    <th>Available/Total</th>
+                    <th>Status</th>
+                    <th width="200">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lot in lots %}
+                <tr>
+                    <td>
+                        <input type="checkbox" name="lot_ids" value="{{ lot.id }}" class="lot-checkbox" 
+                               {% if lot.id|string in selected_lots %}checked{% endif %}>
+                    </td>
+                    <td><strong>{{ lot.id }}</strong></td>
+                    <td>
+                        <strong>{{ lot.location_name }}</strong>
+                        <br><small>Created: {{ lot.created_at.strftime('%Y-%m-%d') }}</small>
+                    </td>
+                    <td>{{ lot.address }}</td>
+                    <td>{{ lot.pin_code }}</td>
+                    <td>₹{{ lot.price_per_hour }}</td>
+                    <td>{{ lot.available_spots }}/{{ lot.max_spots }}</td>
+                    <td>
+                        {% if lot.available_spots == lot.max_spots %}
+                            Empty
+                        {% elif lot.available_spots == 0 %}
+                            Full
+                        {% else %}
+                            Partial
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('admin.view_spots', lot_id=lot.id) }}" class="btn btn-sm btn-info">View</a>
+                        <a href="{{ url_for('admin.edit_parking_lot', lot_id=lot.id) }}" class="btn btn-sm btn-primary">Edit</a>
+                        <a href="{{ url_for('admin.confirm_delete_parking_lot', lot_id=lot.id) }}" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</form>
+{% else %}
+<div class="alert alert-info text-center">
+    <h5>No Parking Lots</h5>
+    <p>No parking lots have been created yet.</p>
+    <a href="{{ url_for('admin.add_parking_lot') }}" class="btn btn-success">Add First Parking Lot</a>
+</div>
+{% endif %}
+
+
+{% endblock %}

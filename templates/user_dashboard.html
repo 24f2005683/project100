@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Vehicle Parking System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h2>Welcome, {{ session.user_name }}!</h2>
+        
+        {% if active_reservation %}
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">🚗 Currently Parked</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <p class="mb-1"><strong>{{ active_reservation.parking_spot.parking_lot.location_name }}</strong></p>
+                        <p class="mb-1">Spot: {{ active_reservation.parking_spot.spot_number }} | Vehicle: {{ active_reservation.vehicle_number }}</p>
+                        <small class="text-muted">Since {{ active_reservation.start_time.strftime('%I:%M %p') }} | ₹{{ active_reservation.parking_spot.parking_lot.price_per_hour }}/hour</small>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <a href="{{ url_for('user.release_parking', reservation_id=active_reservation.id) }}" 
+                           class="btn btn-warning">
+                           Release Spot
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="card border-success">
+            <div class="card-body text-center">
+                <h5 class="text-success">🅿️ Ready to Park?</h5>
+                <p class="mb-3">Find and book a parking spot near you</p>
+                <a href="{{ url_for('user.book_parking') }}" class="btn btn-success btn-lg">Find Parking</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h6>Quick Actions</h6>
+                <div class="d-grid gap-2 mb-3">
+                    {% if not active_reservation %}
+                    <a href="{{ url_for('user.book_parking') }}" class="btn btn-primary btn-sm">Book Parking</a>
+                    {% endif %}
+                    <a href="{{ url_for('user.booking_history') }}" class="btn btn-outline-secondary btn-sm">View History</a>
+                </div>
+                
+                <!-- User Parking Summary Chart -->
+                <div class="text-center">
+                    <h6 class="mb-3">Your Parking Summary</h6>
+                    <div class="summary-chart">
+                        {% set total_bookings = recent_reservations|length %}
+                        {% set active_booking = 1 if active_reservation else 0 %}
+                        {% set completed_bookings = total_bookings - active_booking %}
+                        
+                        <div class="chart-container">
+                            <div class="chart-segment completed" style="width: {{ (completed_bookings / total_bookings * 100) if total_bookings > 0 else 0 }}%">
+                                <span class="segment-label">{{ completed_bookings }}</span>
+                            </div>
+                            <div class="chart-segment active" style="width: {{ (active_booking / total_bookings * 100) if total_bookings > 0 else 0 }}%">
+                                <span class="segment-label">{{ active_booking }}</span>
+                            </div>
+                        </div>
+                        <div class="chart-legend mt-2">
+                            <div class="legend-item">
+                                <span class="legend-color completed"></span>
+                                <small>Completed</small>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color active"></span>
+                                <small>Active</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.summary-chart {
+    margin: 0 auto;
+    max-width: 200px;
+}
+
+.chart-container {
+    display: flex;
+    height: 60px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid #e9ecef;
+}
+
+.chart-segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    min-width: 20px;
+    transition: all 0.3s ease;
+}
+
+.chart-segment.completed {
+    background-color: #6c757d;
+}
+
+.chart-segment.active {
+    background-color: #ffc107;
+}
+
+.segment-label {
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.chart-legend {
+    display: flex;
+    justify-content: space-around;
+    font-size: 11px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.legend-color.completed {
+    background-color: #6c757d;
+}
+
+.legend-color.active {
+    background-color: #ffc107;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}My Bookings - Vehicle Parking System{% endblock %}
+
+{% block content %}
+<h2>My Booking History</h2>
+
+{% if reservations %}
+<div class="row">
+    {% for reservation in reservations %}
+    <div class="col-md-6 mb-3">
+        <div class="card {% if reservation.status == 'Active' %}border-warning{% else %}border-success{% endif %}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="card-title">{{ reservation.parking_spot.parking_lot.location_name }}</h6>
+                        
+                        <!-- Arrival Time -->
+                        <div class="mb-2">
+                            <small class="text-muted">🕐 Arrived:</small>
+                            <div class="fw-bold">{{ reservation.start_time.strftime('%d %b %Y, %I:%M %p') }}</div>
+                        </div>
+                        
+                        <!-- Departure Time (if completed) -->
+                        {% if reservation.end_time %}
+                        <div class="mb-2">
+                            <small class="text-muted">🚗 Left:</small>
+                            <div class="fw-bold">{{ reservation.end_time.strftime('%d %b %Y, %I:%M %p') }}</div>
+                        </div>
+                        
+                        <!-- Duration -->
+                        <div class="mb-2">
+                            <small class="text-muted">⏱️ Duration:</small>
+                            <div class="fw-bold">
+                                {% set duration_hours = ((reservation.end_time - reservation.start_time).total_seconds() / 3600) %}
+                                {{ "%.1f"|format(duration_hours) }} hours
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <small class="text-muted">{{ reservation.vehicle_number }} • Spot {{ reservation.parking_spot.spot_number }}</small>
+                    </div>
+                    <div class="text-end">
+                        {% if reservation.status == 'Active' %}
+                            <span class="badge bg-warning text-dark">Active</span>
+                            <div class="mt-2">
+                                <small class="text-muted">Currently Parked</small>
+                            </div>
+                        {% else %}
+                            <span class="badge bg-success">Completed</span>
+                            {% if reservation.total_cost %}
+                                <div class="fw-bold text-success mt-2">₹{{ reservation.total_cost }}</div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5">
+    <h5>No Bookings Yet</h5>
+    <p class="text-muted">Your parking history will appear here</p>
+    <a href="{{ url_for('user.book_parking') }}" class="btn btn-primary">Book Your First Spot</a>
+</div>
+{% endif %}
+{% endblock %}

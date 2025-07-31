@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Book Parking - Vehicle Parking System{% endblock %}
+
+{% block content %}
+<h2>Choose Parking Location</h2>
+
+{% if lots %}
+<div class="row">
+    {% for lot in lots %}
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="card-title mb-1">{{ lot.location_name }}</h5>
+                        <p class="text-muted mb-1">{{ lot.address }}</p>
+                        <span class="badge bg-primary">₹{{ lot.price_per_hour }}/hour</span>
+                        <span class="badge bg-success">{{ lot.available_spots }} available</span>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        {% if lot.available_spots > 0 %}
+                            <a href="{{ url_for('user.book_spot', lot_id=lot.id) }}" class="btn btn-success">Book Now</a>
+                        {% else %}
+                            <button class="btn btn-secondary" disabled>Full</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-warning text-center">
+    <h5>No Available Parking</h5>
+    <p>All parking lots are currently full. Please try again later.</p>
+    <a href="{{ url_for('user.dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
+</div>
+{% endif %}
+{% endblock %}

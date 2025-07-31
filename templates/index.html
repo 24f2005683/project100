@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Vehicle Parking System{% endblock %}
+
+{% block content %}
+<div class="jumbotron bg-light p-5 rounded-lg mb-4">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">Vehicle Parking System</h1>
+        <p class="col-md-8 fs-4">Welcome to our smart parking management system. Book your parking spot with ease!</p>
+        <div class="mt-4">
+            {% if not session.user_id and not session.admin_id %}
+                <a href="{{ url_for('main.register') }}" class="btn btn-primary btn-lg me-3">Get Started</a>
+                <a href="{{ url_for('main.login') }}" class="btn btn-outline-secondary btn-lg">Login</a>
+            {% elif session.user_id %}
+                <a href="{{ url_for('user.dashboard') }}" class="btn btn-primary btn-lg me-3">Go to Dashboard</a>
+                <a href="{{ url_for('user.book_parking') }}" class="btn btn-success btn-lg">Book Parking</a>
+            {% elif session.admin_id %}
+                <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-primary btn-lg">Admin Dashboard</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">🚗 Easy Booking</h5>
+                <p class="card-text">Find and book parking spots in your area with just a few clicks.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">💰 Fair Pricing</h5>
+                <p class="card-text">Transparent hourly rates with no hidden charges. Pay only for what you use.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">⏰ 24/7 Available</h5>
+                <p class="card-text">Book and release parking spots anytime, anywhere through our web platform.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

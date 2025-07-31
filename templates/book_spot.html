@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Confirm Booking - Vehicle Parking System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white text-center">
+                <h5 class="mb-0">Confirm Parking Booking</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <h6>{{ lot.location_name }}</h6>
+                    <p class="text-muted">{{ lot.address }}</p>
+                    <span class="badge bg-primary fs-6">₹{{ lot.price_per_hour }}/hour</span>
+                </div>
+                
+                <form method="POST">
+                    <div class="mb-4">
+                        <label for="vehicle_number" class="form-label">Enter Vehicle Number</label>
+                        <input type="text" class="form-control form-control-lg text-center" id="vehicle_number" name="vehicle_number" 
+                               placeholder="DL 01 AB 1234" required style="text-transform: uppercase;" maxlength="15" pattern="[A-Z0-9\s]+">
+                        <small class="text-muted">Only letters, numbers and spaces allowed</small>
+                    </div>
+                    
+                    <div class="alert alert-light text-center">
+                        <small class="text-muted">
+                            Minimum 1 hour charge • Release anytime
+                        </small>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">Confirm & Book</button>
+                        <a href="{{ url_for('user.book_parking') }}" class="btn btn-outline-secondary">Choose Different Location</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

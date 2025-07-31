@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Add Parking Lot - Vehicle Parking System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>Add New Parking Lot</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" id="addLotForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="location_name" class="form-label">Location Name</label>
+                            <input type="text" class="form-control" id="location_name" name="location_name" 
+                                   placeholder="e.g., City Mall Parking" required>
+                            <div class="form-text">Enter a descriptive name for the parking location</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="price_per_hour" class="form-label">Price per Hour (₹)</label>
+                            <input type="number" class="form-control" id="price_per_hour" name="price_per_hour" 
+                                   value="50" step="1" min="1" required>
+                            <div class="form-text">Set the hourly parking rate</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea class="form-control" id="address" name="address" rows="3" 
+                                  placeholder="Enter the complete address of the parking lot" required></textarea>
+                        <div class="form-text">Provide the full address for easy location</div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="pin_code" class="form-label">Pin Code</label>
+                            <input type="text" class="form-control" id="pin_code" name="pin_code" 
+                                   placeholder="110001" maxlength="6" pattern="[0-9]{6}" required>
+                            <div class="form-text">6-digit postal code</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="max_spots" class="form-label">Total Parking Spots</label>
+                            <input type="number" class="form-control" id="max_spots" name="max_spots" 
+                                   value="20" min="1" max="200" required>
+                            <div class="form-text">Number of parking spots available (1-200)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <strong>Note:</strong> This will create 20 parking spots automatically.
+                    </div>
+                    
+                    <div class="text-end">
+                        <a href="{{ url_for('admin.view_parking_lots') }}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-success">Create Parking Lot</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

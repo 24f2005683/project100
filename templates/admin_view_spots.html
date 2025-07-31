@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}View Spots - {{ lot.location_name }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h3>{{ lot.location_name }} - Parking Spots</h3>
+    <p>{{ lot.address }}</p>
+    <div class="mb-3">
+        <a href="{{ url_for('admin.edit_parking_lot', lot_id=lot.id) }}" class="btn btn-primary">Edit Lot</a>
+        <a href="{{ url_for('admin.view_parking_lots') }}" class="btn btn-secondary">Back to Lots</a>
+    </div>
+</div>
+
+<!-- Simple Summary -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h4>{{ lot.max_spots }}</h4>
+                <p>Total Spots</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h4>{{ lot.available_spots }}</h4>
+                <p>Available</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h4>{{ lot.max_spots - lot.available_spots }}</h4>
+                <p>Occupied</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h4>₹{{ lot.price_per_hour }}</h4>
+                <p>Per Hour</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if spots %}
+<!-- Add New Spot -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5>Add New Spot</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('admin.add_spot', lot_id=lot.id) }}">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="spot_number">Spot Number</label>
+                    <input type="text" class="form-control" id="spot_number" name="spot_number" 
+                           placeholder="e.g., P001, A1, B2" required>
+                </div>
+                <div class="col-md-6">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-success d-block">Add Spot</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Bulk Actions -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5>Bulk Actions</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('admin.bulk_spot_action', lot_id=lot.id) }}">
+            <div class="row">
+                <div class="col-md-3">
+                    <a href="{{ url_for('admin.view_spots', lot_id=lot.id, select_all='true') }}" class="btn btn-primary">Select All Available</a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{{ url_for('admin.view_spots', lot_id=lot.id) }}" class="btn btn-secondary">Clear Selection</a>
+                </div>
+                <div class="col-md-3">
+                    <span>Selected: 0</span>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-danger">Delete Selected</button>
+                    <input type="hidden" name="action" value="delete">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Spots List -->
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Spot Number</th>
+                <th>Status</th>
+                <th>Actions</th>
+                <th>Select</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for spot in spots %}
+            <tr>
+                <td>{{ spot.spot_number }}</td>
+                <td>
+                    {% if spot.status == 'A' %}
+                        <span class="badge bg-success">Available</span>
+                    {% else %}
+                        <span class="badge bg-warning">Occupied</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if spot.status == 'A' %}
+                        <a href="{{ url_for('admin.edit_spot_form', spot_id=spot.id) }}" class="btn btn-sm btn-primary">Edit</a>
+                        <a href="{{ url_for('admin.confirm_delete_spot', spot_id=spot.id) }}" class="btn btn-sm btn-danger">Delete</a>
+                    {% else %}
+                        <span class="text-muted">Cannot modify</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if spot.status == 'A' %}
+                        <input type="checkbox" name="spot_ids" value="{{ spot.id }}" 
+                               {% if select_all %}checked{% endif %}>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% else %}
+<!-- No spots yet -->
+<div class="card">
+    <div class="card-body text-center">
+        <h5>No Parking Spots Yet</h5>
+        <p>This parking lot doesn't have any spots yet. Add the first spot below.</p>
+        <form method="POST" action="{{ url_for('admin.add_spot', lot_id=lot.id) }}">
+            <div class="row justify-content-center">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" name="spot_number" placeholder="Spot Number (e.g., P001)" required>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-success">Add First Spot</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

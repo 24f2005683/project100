@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Parking Lot - Vehicle Parking System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>Edit Parking Lot</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info mb-4">
+                    <strong>Current Status:</strong> {{ lot.available_spots }}/{{ lot.max_spots }} spots available
+                    {% if lot.available_spots < lot.max_spots %}
+                        <br><small>Some spots are occupied. Reducing total spots will only affect available spots.</small>
+                    {% endif %}
+                </div>
+                
+                <form method="POST" id="editLotForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="location_name" class="form-label">Location Name</label>
+                            <input type="text" class="form-control" id="location_name" name="location_name" 
+                                   value="{{ lot.location_name }}" required>
+                            <div class="form-text">Enter a descriptive name for the parking location</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="pin_code" class="form-label">Pin Code</label>
+                            <input type="text" class="form-control" id="pin_code" name="pin_code" 
+                                   value="{{ lot.pin_code }}" maxlength="6" pattern="[0-9]{6}" required>
+                            <div class="form-text">6-digit postal code</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea class="form-control" id="address" name="address" rows="3" required>{{ lot.address }}</textarea>
+                        <div class="form-text">Provide the full address for easy location</div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="price_per_hour" class="form-label">Price per Hour (₹)</label>
+                            <input type="number" class="form-control" id="price_per_hour" name="price_per_hour" 
+                                   value="{{ lot.price_per_hour }}" step="1" min="1" required>
+                            <div class="form-text">Set the hourly parking rate</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="max_spots" class="form-label">Total Spots</label>
+                            <input type="number" class="form-control" id="max_spots" name="max_spots" 
+                                   value="{{ lot.max_spots }}" min="1" max="200" required>
+                            <div class="form-text">
+                                Current: {{ lot.max_spots }} spots
+                                {% if lot.available_spots < lot.max_spots %}
+                                    <br><span class="text-warning">⚠️ Only available spots can be reduced</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">Spot Summary</h6>
+                                    <div class="row text-center">
+                                        <div class="col-md-4">
+                                            <div class="border-end">
+                                                <h4 class="text-success">{{ lot.available_spots }}</h4>
+                                                <small class="text-muted">Available</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="border-end">
+                                                <h4 class="text-danger">{{ lot.max_spots - lot.available_spots }}</h4>
+                                                <small class="text-muted">Occupied</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h4 class="text-primary">{{ lot.max_spots }}</h4>
+                                            <small class="text-muted">Total</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-end">
+                        <a href="{{ url_for('admin.view_parking_lots') }}" class="btn btn-secondary">Cancel</a>
+                        <a href="{{ url_for('admin.view_spots', lot_id=lot.id) }}" class="btn btn-info">View Spots</a>
+                        <button type="submit" class="btn btn-primary">Update Parking Lot</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

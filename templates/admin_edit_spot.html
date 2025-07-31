@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Spot - {{ spot.spot_number }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Edit Parking Spot</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info mb-4">
+                    <strong>Current Spot:</strong> {{ spot.spot_number }}
+                    <br><small>Parking Lot: {{ spot.parking_lot.location_name }}</small>
+                </div>
+                
+                <form method="POST" action="{{ url_for('admin.edit_spot', spot_id=spot.id) }}">
+                    <div class="mb-3">
+                        <label for="spot_number" class="form-label">Spot Number</label>
+                        <input type="text" class="form-control" id="spot_number" name="spot_number" 
+                               value="{{ spot.spot_number }}" required>
+                        <div class="form-text">Enter a unique spot identifier</div>
+                    </div>
+                    
+                    <div class="text-end">
+                        <a href="{{ url_for('admin.view_spots', lot_id=spot.parking_lot.id) }}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Update Spot</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
